@@ -132,7 +132,7 @@ Fetches live pump data, makes forecasts, displays a forecast chart, and prints a
 
 The chart shows color-coded glucose readings (green = in-range, orange = low/high, red = hypo/hyper) and dashed forecast.
 
-<img width="1400" height="500" alt="image" src="https://github.com/user-attachments/assets/f121afb0-e90b-46fd-99a8-e37469a41a86" />
+<img width="1400" height="500" alt="image" src="https://github.com/user-attachments/assets/8f637a97-52ac-48be-8067-3591be22ef64" />
 
 ---
 
@@ -144,7 +144,7 @@ The detection score combines three error terms:
 |---|---|---|
 | Value MSE | 1.0 | Overall glucose level accuracy |
 | Slope L1 | 1.5 | Rate-of-change accuracy |
-| Rising slope MSE | 3.0 | Penalises unpredicted rising trends |
+| Rising slope MSE | 3.0 | Penalises unforecasted rising trends in real-time data |
 
 A score above **mean + 2σ** triggers a mild anomaly warning; above **mean + 3σ** triggers a strong warning. 
 
