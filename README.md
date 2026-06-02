@@ -1,6 +1,6 @@
 # CGM Forecast Monitor
 
-A real-time glucose forecasting and anomaly detection system for Tandem t:slim X2 insulin pump users. An LSTM model trained on historical pump data predicts the next 2 hours of CGM readings every 15 minutes, and flags when live sensor values diverge significantly from the forecast.
+A real-time glucose forecasting and anomaly detection system for Tandem t:slim X2 insulin pump users. An LSTM model trained on historical pump data predicts the next 2 hours of CGM readings every 10 minutes, and flags when live sensor values diverge significantly from the forecast.
 
 ---
 
