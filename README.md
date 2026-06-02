@@ -131,6 +131,7 @@ Fetches live pump data, makes forecasts, displays a forecast chart, and prints a
 ```
 
 The chart shows colour-coded glucose readings (green = in-range, orange = low/high, red = hypo/hyper) and dashed forecast.
+
 <img width="1400" height="500" alt="image" src="https://github.com/user-attachments/assets/534cf6cf-8ddb-40ce-9d8f-13a6309349ef" />
 
 ---
