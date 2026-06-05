@@ -1,23 +1,23 @@
 # CGM Forecast Monitor
 
-A real-time glucose forecasting and anomaly detection system for Tandem t:slim X2 insulin pump users. An LSTM model trained on historical pump data predicts the next 2 hours of CGM readings every 10 minutes, and flags when live sensor values diverge significantly from the forecast.
+A real time glucose forecasting and anomaly detection system for Tandem t:slim X2 insulin pump users. An LSTM model trained on historical pump data predicts the next 2 hours of CGM readings every 10 minutes, and flags when live sensor values diverge significantly from the forecast.
 
 ---
 
 ## How It Works
 
-1. **Training** — `train.py` ingests Tandem Source CSV exports, merges CGM, basal, and bolus data into aligned 5-minute windows, fits a preprocessing pipeline, and trains the LSTM.
-2. **Forecasting** — `simulate.py` connects to the Tandem Source API, fetches the last 6 hours of live pump events, runs the model, and prints a detection report with a Dexcom-styled chart.
-3. **Anomaly detection** — a weighted composite score (value error + slope error + rising-slope penalty) flags readings that diverge from the forecast at 2σ or 3σ.
+1. **Training:** `train.py` ingests Tandem Source CSV exports, merges CGM, basal, and bolus data into aligned 5-minute windows, fits a preprocessing pipeline, and trains the LSTM.
+2. **Forecasting:** `simulate.py` connects to the Tandem Source API, fetches the last 6 hours of live pump events, runs the model, and prints a detection report with a Dexcom-styled chart.
+3. **Anomaly detection:** a weighted composite score (value error + slope error + rising slope penalty) flags readings that diverge from the forecast at 2σ or 3σ.
 
 ---
 
 ## Project Structure
 
 ```
-├── data_processing.py      # Merge & feature-engineer CGM/basal/bolus DataFrames
-├── dataset.py              # PyTorch sliding-window Dataset
-├── model.py                # CgmLstm: 3-layer LSTM → FC(24)
+├── data_processing.py      # Merge & feature engineer CGM/basal/bolus DataFrames
+├── dataset.py              # PyTorch sliding window Dataset
+├── model.py                # CgmLstm: 3 layer LSTM → FC(24)
 ├── model_preprocessing.py  # Sklearn imputation + MinMax scaling pipeline
 ├── simulate.py             # Live forecast, anomaly detection, console report
 ├── train.py                # Training script
@@ -26,7 +26,7 @@ A real-time glucose forecasting and anomaly detection system for Tandem t:slim X
 ├── model_weights.pth       # Saved model weights (not committed)
 ├── preprocessor.joblib     # Fitted sklearn pipeline (not committed)
 ├── detection_stats.joblib  # Fitted anomaly detection benchmarks (not committed)
-└── .env                    # Credentials (not committed — see Setup)
+└── .env                    # Tandem credentials (not committed — see Setup)
 ```
 
 ---
@@ -35,7 +35,7 @@ A real-time glucose forecasting and anomaly detection system for Tandem t:slim X
 
 | Component | Detail |
 |---|---|
-| Architecture | 3-layer LSTM + linear head |
+| Architecture | 3 layer LSTM + linear head |
 | Input | 7 features × 48 steps (4 hours) |
 | Output | 24 steps (2-hour forecast) |
 | Loss | 0.5 × value MSE + 0.5 × slope MSE |
@@ -71,7 +71,7 @@ Install with:
 pip install torch numpy pandas scikit-learn matplotlib joblib tconnectsync python-dotenv
 ```
 
-A CUDA-capable GPU is expected for model training. Forecasting runs on CPU if needed (change `"cuda"` to `"cpu"` in `model.py`)
+A CUDA capable GPU is expected for model training. Forecasting runs on CPU if needed (change `"cuda"` to `"cpu"` in `model.py`)
 
 ---
 
@@ -130,7 +130,7 @@ Fetches most recent available data from Tandem Source, makes forecasts, displays
   No anomaly detected
 ```
 
-The chart shows color-coded glucose readings (green = in-range, orange = low/high, red = hypo/hyper) and dashed 2-hour forecast.
+The chart shows color coded glucose readings (green = in range, orange = low/high, red = hypo/hyper) and dashed 2-hour forecast.
 
 <img width="1400" height="500" alt="image" src="https://github.com/user-attachments/assets/a73ce3ec-4845-453b-b1fc-e5252483fc31" />
 
@@ -143,8 +143,8 @@ The detection score combines three error terms:
 | Term | Weight | Purpose |
 |---|---|---|
 | Value MSE | 1.0 | Overall glucose level accuracy |
-| Slope L1 | 1.5 | Rate-of-change accuracy |
-| Rising slope MSE | 3.0 | Penalises unforecasted rising trends in real-time data |
+| Slope L1 | 1.5 | Rate of change accuracy |
+| Rising slope MSE | 3.0 | Penalises unforecasted rising trends in real time data |
 
 A detectection score above mean + 2σ triggers a mild anomaly warning; above mean + 3σ triggers a strong warning. 
 
