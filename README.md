@@ -38,7 +38,7 @@ A real time glucose forecasting and anomaly detection system for Tandem t:slim X
 | Architecture | 3 layer LSTM + linear head |
 | Input | 7 features × 48 steps (4 hours) |
 | Output | 24 steps (2-hour forecast) |
-| Loss | 0.5 × value MSE + 0.5 × slope MSE |
+| Loss | 1 × value MSE + 0.15 × slope MSE + 0.05 × curvature MSE |
 | Optimizer | Adam, lr=0.001 |
 
 **Input features** (per 5-minute step):
