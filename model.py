@@ -11,8 +11,6 @@ NUM_LAYERS = 3
 DROPOUT = 0.2
 OUTPUT_STEPS = 24
 LEARNING_RATE = 0.001
-COMBO_LOSS_WEIGHT = 0.5
-
 
 class CgmLstm(nn.Module):
     """Three layer LSTM that predicts the next 24 CGM readings.
@@ -22,8 +20,7 @@ class CgmLstm(nn.Module):
         - Fully connected output layer: 128 → 24
 
     Loss:
-        Composite of MSE on predicted values and MSE on successive deltas,
-        weighted equally (0.5 / 0.5).
+        Composite of MSE on predicted values, slopes, and curvatures.
     """
 
     def __init__(self) -> None:
@@ -39,21 +36,37 @@ class CgmLstm(nn.Module):
         self.optimizer = optim.Adam(self.parameters(), lr=LEARNING_RATE)
         self.loss_fn = nn.MSELoss()
 
-    def combo_loss(self, pred: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
-        """Composite loss combining value MSE and shape (delta) MSE.
+    def combo_loss(self, pred: torch.Tensor, target: torch.Tensor,
+                   value_w: float = 1.0, slope_w: float = 0.15, curve_w: float = 0.05) -> torch.Tensor:
+        """Composite loss combining value MSE, slope MSE, and curvature MSE.
 
         Args:
             pred: Predicted CGM sequence, shape (batch, OUTPUT_STEPS).
-            target: Ground-truth CGM sequence, shape (batch, OUTPUT_STEPS).
+            target: Ground truth CGM sequence, shape (batch, OUTPUT_STEPS).
+            value_w: Weighting of value loss.
+            slope_w: Weighting of slope loss.
+            curve_w: Weighting of curvature loss.
 
         Returns:
             Scalar loss tensor.
         """
-        value_loss = self.loss_fn(pred, target)
+        weights = torch.tensor([value_w, slope_w, curve_w], dtype=pred.dtype, device=pred.device)
+        weights = weights / weights.sum()
+
+        eps = 1e-8
+
+        value_loss = self.loss_fn(pred, target) / (target.var() + eps)
+
         delta_pred = pred[:, 1:] - pred[:, :-1]
         delta_true = target[:, 1:] - target[:, :-1]
-        shape_loss = self.loss_fn(delta_pred, delta_true)
-        return COMBO_LOSS_WEIGHT * value_loss + COMBO_LOSS_WEIGHT * shape_loss
+        slope_loss = self.loss_fn(delta_pred, delta_true) / (delta_true.var() + eps)
+
+        curve_pred = delta_pred[:, 1:] - delta_pred[:, :-1]
+        curve_true = delta_true[:, 1:] - delta_true[:, :-1]
+        curve_loss = self.loss_fn(curve_pred, curve_true) / (curve_true.var() + eps)
+
+
+        return weights[0] * value_loss + weights[1] * slope_loss + weights[2] * curve_loss
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Run a forward pass through the LSTM and output layer.

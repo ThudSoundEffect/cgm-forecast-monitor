@@ -14,7 +14,7 @@ from dataset import SeriesSet
 from model import CgmLstm
 from model_preprocessing import get_preprocessor
 from simulate import compute_error_detection_score
-from visualizer import inverse_scale, to_numpy
+from visualizer import inverse_scale, to_numpy, Visualizer
 
 TRAIN_SPLIT = 0.8
 SEQ_LEN = 48

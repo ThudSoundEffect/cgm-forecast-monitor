@@ -164,7 +164,7 @@ class Simulate:
         self.df = self.preprocessor.transform(self.df)
 
     def detect(self) -> None:
-        """Fetch live data, make forecast, plot results, and print anomaly verdict."""
+        """Fetch live data, make forecast, plot results, and print anomaly report."""
         self._fetch_recent_data()
 
         window = self.df.iloc[-INPUT_WINDOW:-OFFSET].values
