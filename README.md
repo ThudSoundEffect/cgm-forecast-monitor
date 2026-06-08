@@ -71,7 +71,7 @@ Install with:
 pip install torch numpy pandas scikit-learn matplotlib joblib tconnectsync python-dotenv
 ```
 
-A CUDA capable GPU is expected for model training. Forecasting runs on CPU if needed (change `"cuda"` to `"cpu"` in `model.py`)
+A CUDA capable GPU is expected for model training. 
 
 ---
 
