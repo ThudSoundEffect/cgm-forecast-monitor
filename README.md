@@ -38,7 +38,7 @@ A real time glucose forecasting and anomaly detection system for Tandem t:slim X
 | Architecture | 3 layer LSTM + linear head |
 | Input | 7 features × 48 steps (4 hours) |
 | Output | 24 steps (2-hour forecast) |
-| Loss | weighted sum of SmoothL1Loss of value, slope, and curvature |
+| Loss | Weighted sum of losses for value, slope, and curvature |
 | Optimizer | Adam, lr=0.001 |
 
 **Input features** (per 5-minute step):
@@ -50,7 +50,7 @@ A real time glucose forecasting and anomaly detection system for Tandem t:slim X
 - Insulin on board (linear decay model, 4-hour duration of insulin action)
 - Time of day with sin/cos encoding
 
-**Loss function** 
+**Loss function:** 
 
 - Value loss: loss between targets and predictions
 - Slope loss: loss between first derivatives of targets and predictions
