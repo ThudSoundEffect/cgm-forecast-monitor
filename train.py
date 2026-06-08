@@ -11,7 +11,7 @@ from torch.utils.data import DataLoader
 
 from data_processing import MergedDf
 from dataset import SeriesSet
-from model import CgmLstm
+from model import CgmLstm, random_sweep
 from model_preprocessing import get_preprocessor
 from simulate import compute_error_detection_score
 from visualizer import inverse_scale, to_numpy, Visualizer
@@ -107,7 +107,8 @@ if __name__ == "__main__":
 
     model = CgmLstm()
     model.train_model(NUM_EPOCHS, train_loader)
-    model.evaluate_model(test_loader)
+
+    print(f"Validation Loss: {model.evaluate_model(test_loader):.4f}")
 
     torch.save(model.state_dict(), WEIGHTS_PATH)
     print(f"Saved {WEIGHTS_PATH}")

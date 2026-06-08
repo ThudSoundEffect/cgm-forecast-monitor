@@ -1,4 +1,4 @@
-"""Visualisation utilities for CGM predictions and aggregate statistics."""
+"""Visualisation tools for CGM predictions and aggregate statistics."""
 
 import random
 from datetime import datetime, timedelta
@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import torch
 
 from data_processing import round_times
@@ -89,7 +90,7 @@ def graph_comparison(
     predicted_vals: np.ndarray,
     start_time: datetime | None = None,
 ) -> None:
-    """Plot input history, ground truth, and model predictions.
+    """Plot input history, truth, and model predictions.
 
     With:
     - Glucose range bands (hypo / in-range / hyper zones)
